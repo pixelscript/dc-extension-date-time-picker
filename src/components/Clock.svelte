@@ -1,10 +1,11 @@
 <script>
-  import { onMount } from "svelte";
+  import { createEventDispatcher } from "svelte";
   import { fade } from "svelte/transition";
   export let date;
-  let hour = date.getHours();
+  const dispatch = createEventDispatcher();
+  let hour = date.getHours() ? date.getHours() : 24;
   let minute = date.getMinutes();
-  let second = date.getSeconds();
+  let seconds = date.getSeconds();
   let hourIndex = hour % 12;
   let size = hour > 12 ? -20 : -35;
   let selection = "hour";
@@ -13,14 +14,26 @@
     hour = h;
     hourIndex = h % 12;
     size = h > 12 ? -20 : -35;
+    date.setHours(h);
+    setDate();
   }
   function setMinute(m) {
     minute = m;
+    date.setMinutes(m);
+    setDate();
+  }
+  function setSeconds(s) {
+    seconds = s;
+    date.setSeconds(s);
+    setDate();
   }
   function createArray(number) {
     return Array.apply(null, Array(number)).map(function(x, i) {
       return i;
     });
+  }
+  function setDate() {
+    dispatch('update', date);
   }
 </script>
 
@@ -35,8 +48,7 @@
     stroke-width: 0.1;
   }
 
-  svg text,
-  svg rect {
+  svg text {
     transform-origin: 50% 50%;
   }
 
@@ -74,33 +86,9 @@
   g text {
     cursor: pointer;
   }
-
-  .minor {
-    stroke: #999;
-    stroke-width: 0.5;
-  }
-
-  .major {
-    stroke: #555;
-    stroke-width: 1;
-  }
-
   .line {
     stroke: #00acc1;
     stroke-width: 2;
-  }
-
-  .minute {
-    stroke: #666;
-  }
-
-  .second,
-  .second-counterweight {
-    stroke: rgb(180, 0, 0);
-  }
-
-  .second-counterweight {
-    stroke-width: 1;
   }
 </style>
 
@@ -168,11 +156,11 @@
         y2={size}
         transform="rotate({30 * hourIndex})" />
     </g>
-  {:else}
+  {:else if selection==='minute'}
     <g transition:fade class="mins">
       {#each minutes as min, i}
         <g
-          on:click={() => (selection = 'minute')}
+          on:click={() => (selection = 'seconds')}
           on:mouseover={() => {
             setMinute(min);
           }}
@@ -200,20 +188,37 @@
       {/each}
       <line class="line" y1="0" y2="-35" transform="rotate({6 * minute})" />
     </g>
+    {:else}
+    <g transition:fade class="mins">
+      {#each minutes as min, i}
+        <g
+          on:click={() => (dispatch('hide'))}
+          on:mouseover={() => {
+            setSeconds(min);
+          }}
+          class={min === seconds ? 'selected' : ''}>
+          <circle
+            class="hourCircle"
+            cx="0"
+            cy="-40"
+            r="6"
+            transform="rotate({6 * min})" />
+          <g transform="rotate({6 * min})">
+            <svg x="-10" y="-45" width="20" height="10">
+              <text
+                class={min % 5 === 0 ? 'label show' : 'label'}
+                transform="rotate(-{6 * min}) translate(0,1)"
+                x="50%"
+                y="50%"
+                dominant-baseline="middle"
+                text-anchor="middle">
+                {min}
+              </text>
+            </svg>
+          </g>
+        </g>
+      {/each}
+      <line class="line" y1="0" y2="-35" transform="rotate({6 * seconds})" />
+    </g>
   {/if}
-
-  <!-- minute hand
-  <line
-    class="minute"
-    y1="4"
-    y2="-30"
-    transform="rotate({6 * minutes + seconds / 10})" />
-
-  <!-- second hand
-  <g transform="rotate({6 * seconds})">
-    <line class="second" y1="10" y2="-38" />
-    <line class="second-counterweight" y1="10" y2="2" />
-  </g> -->
 </svg>
-<h1>{hour}</h1>
-<h1>{size}</h1>
