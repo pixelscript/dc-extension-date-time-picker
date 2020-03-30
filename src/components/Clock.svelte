@@ -3,21 +3,6 @@
 
   let time = new Date();
 
-  // these automatically update when `time`
-  // changes, because of the `$:` prefix
-  $: hours = time.getHours();
-  $: minutes = time.getMinutes();
-  $: seconds = time.getSeconds();
-
-  onMount(() => {
-    const interval = setInterval(() => {
-      time = new Date();
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  });
 </script>
 
 <style>
@@ -27,18 +12,26 @@
     max-width: 20em;
   }
 
+  circle {
+    stroke-width: 0.1;
+  }
+
+  svg text{
+    transform-origin: 50% 50%;
+  }
+
   .label {
     font-size: 0.5em;
   }
 
   .clock-face {
-    stroke: #333;
+    stroke: #555;
     fill: white;
   }
 
   .hourHit {
     stroke: transparent;
-    fill: #bbb;
+    fill: #eee;
   }
 
   .minor {
@@ -47,7 +40,7 @@
   }
 
   .major {
-    stroke: #333;
+    stroke: #555;
     stroke-width: 1;
   }
 
@@ -65,7 +58,7 @@
   }
 
   .second-counterweight {
-    stroke-width: 3;
+    stroke-width: 1;
   }
 </style>
 
@@ -73,27 +66,8 @@
   <circle class="clock-face" r="48" />
 
   <!-- markers -->
-  {#each [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55] as minute, i}
+  <!-- {#each [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55] as minute, i}
     <line class="major" y1="35" y2="45" transform="rotate({30 * minute})" />
-
-    <circle
-      class="hourHit"
-      cx="0"
-      cy="40"
-      r="7"
-      transform="rotate({30 * minute})" />
-    <g transform="rotate({30 * minute})">
-      <svg x="-5" y="36" width="10" height="10">
-        <text
-          class="label"
-          x="50%"
-          y="50%"
-          dominant-baseline="middle"
-          text-anchor="middle">
-          {i}
-        </text>
-      </svg>
-    </g>
     {#each [1, 2, 3, 4] as offset}
       <line
         class="minor"
@@ -101,25 +75,68 @@
         y2="45"
         transform="rotate({6 * (minute + offset)})" />
     {/each}
+  {/each} -->
+
+  <!-- hitarea -->
+  {#each [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as minute, i}
+    <circle
+      class="hourHit"
+      cx="0"
+      cy="-40"
+      r="4"
+      transform="rotate({30 * minute})" />
+    <g transform="rotate({30 * minute})">
+      <svg x="-9.4" y="-44.6" width="20" height="10">
+        <text
+          transform="rotate(-{30 * minute})"
+          class="label"
+          x="50%"
+          y="50%"
+          dominant-baseline="middle"
+          text-anchor="middle">
+          {minute}
+        </text>
+      </svg>
+    </g>
+
+    <circle
+      class="hourHit"
+      cx="0"
+      cy="-25"
+      r="4"
+      transform="rotate({30 * minute})" />
+    <g transform="rotate({30 * minute})">
+      <svg x="-4.5" y="-30" width="10" height="10">
+        <text
+          transform="rotate(-{30 * minute})"
+          class="label"
+          x="50%"
+          y="50%"
+          dominant-baseline="middle"
+          text-anchor="middle">
+          {minute + 12}
+        </text>
+      </svg>
+    </g>
   {/each}
 
-  <!-- hour hand -->
+  <!-- hour hand
   <line
     class="hour"
     y1="2"
     y2="-20"
     transform="rotate({30 * hours + minutes / 2})" />
 
-  <!-- minute hand -->
+  <!-- minute hand
   <line
     class="minute"
     y1="4"
     y2="-30"
     transform="rotate({6 * minutes + seconds / 10})" />
 
-  <!-- second hand -->
+  <!-- second hand
   <g transform="rotate({6 * seconds})">
     <line class="second" y1="10" y2="-38" />
     <line class="second-counterweight" y1="10" y2="2" />
-  </g>
+  </g> -->
 </svg>
