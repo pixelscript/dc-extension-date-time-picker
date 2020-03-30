@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from "svelte";
   export let date;
-  
+
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ]
   const dispatch = createEventDispatcher();
 
@@ -23,10 +23,19 @@
     dispatch('update', d);
   }
 
+  function americanDayToBritishDay(num){
+    //Sunday isn't 0, Monday is, duh
+    num -= 1;
+    if(num<0) {
+      num = 6;
+    }
+    return num;
+  }
+
   function startDayOfMonth(d) {
     let nd = new Date(d);
-    nd.setDate(0);
-    return d.getDay()+1;
+    nd.setDate(1);
+    return americanDayToBritishDay(nd.getDay());
   }
 
   function daysInMonth(date) {
