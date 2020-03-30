@@ -101,7 +101,7 @@
 <svg class="clock" viewBox="-50 -50 100 100">
   <circle class="clock-face" r="48" />
   {#if selection === 'hour'}
-    <g transition:fade>
+    <g transition:fade|local>
 
       {#each [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as minute, i}
         <g
@@ -167,7 +167,7 @@
       </text>
     </g>
   {:else if selection === 'minute'}
-    <g transition:fade class="mins">
+    <g transition:fade|local class="mins">
       {#each minutes as min, i}
         <g class={min === minute ? 'selected' : ''}>
           <circle
@@ -207,7 +207,7 @@
       {/each}
     </g>
   {:else}
-    <g transition:fade class="mins">
+    <g transition:fade|local class="mins">
 
       {#each minutes as min, i}
         <g class={min === seconds ? 'selected' : ''}>

@@ -17,7 +17,6 @@
       sdk.frame.startAutoResizer();
       setState(sdk.field.schema.format);
 			const d = await sdk.field.getValue();
-			console.log(d);
       if (d && format === "date-time") {
         date = new Date(d);
       } else if (d && format === "date") {
@@ -50,8 +49,10 @@
       } else if (format === "time") {
         str = split[1];
       }
-    }
-    sdk.field.setValue(str);
+		}
+		if(sdk) {
+			sdk.field.setValue(str);
+		}
   }
 
   function toggle(component) {
@@ -136,7 +137,7 @@
   {/if}
   <div class="clear" />
   {#if editingDate}
-    <div class="editor" transition:fly={{ x: -500, duration: 500 }}>
+    <div class="editor" in:fly={{ x: -500, duration: 500}}>
       <Calendar
         {date}
         on:hide={() => (editingDate = false)}
@@ -144,7 +145,7 @@
     </div>
   {/if}
   {#if editingTime}
-    <div class="editor" transition:fly={{ x: -500, duration: 500 }}>
+    <div class="editor" in:fly={{ x: -500, duration: 500 }}>
       <Clock
         {date}
         on:hide={() => (editingTime = false)}
