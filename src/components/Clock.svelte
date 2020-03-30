@@ -1,8 +1,27 @@
 <script>
   import { onMount } from "svelte";
-
-  let time = new Date();
-  let hour = 1;
+  import { fade } from "svelte/transition";
+  export let date;
+  let hour = date.getHours();
+  let minute = date.getMinutes();
+  let second = date.getSeconds();
+  let hourIndex = hour % 12;
+  let size = hour > 12 ? -20 : -35;
+  let selection = "hour";
+  let minutes = createArray(60);
+  function setHour(h) {
+    hour = h;
+    hourIndex = h % 12;
+    size = h > 12 ? -20 : -35;
+  }
+  function setMinute(m) {
+    minute = m;
+  }
+  function createArray(number) {
+    return Array.apply(null, Array(number)).map(function(x, i) {
+      return i;
+    });
+  }
 </script>
 
 <style>
@@ -24,23 +43,34 @@
   .label {
     font-size: 0.5em;
   }
+  .label-inner {
+    font-size: 0.25em;
+  }
 
   .clock-face {
     stroke: #555;
     fill: white;
   }
 
-  .hourHit {
+  .hourCircle {
     stroke: transparent;
-    fill: #eee;
+    fill: transparent;
   }
-  g:hover .hourHit {
+  g.mins text {
+    fill: transparent;
+  }
+  g.mins text.show {
+    fill: black;
+  }
+  g.selected .hourCircle {
     fill: #00acc1;
   }
-  g:hover text {
+
+  g.selected text,
+  g.selected text.show {
     fill: white;
   }
-  g .hourHit,
+  g .hourCircle,
   g text {
     cursor: pointer;
   }
@@ -55,8 +85,9 @@
     stroke-width: 1;
   }
 
-  .hour {
-    stroke: #333;
+  .line {
+    stroke: #00acc1;
+    stroke-width: 2;
   }
 
   .minute {
@@ -75,72 +106,101 @@
 
 <svg class="clock" viewBox="-50 -50 100 100">
   <circle class="clock-face" r="48" />
-  <circle class="clock-face" r="2" />
-
-  <!-- markers -->
-  {#each [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55] as minute, i}
-    <line class="major" y1="35" y2="45" transform="rotate({30 * minute})" />
-    {#each [1, 2, 3, 4] as offset}
+  {#if selection === 'hour'}
+    <g transition:fade>
+      {#each [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as minute, i}
+        <g
+          on:click={() => (selection = 'minute')}
+          on:mouseover={() => {
+            setHour(minute);
+          }}
+          class={minute === hour ? 'selected' : ''}>
+          <circle
+            class="hourCircle"
+            cx="0"
+            cy="-40"
+            r="6"
+            transform="rotate({30 * minute})" />
+          <g transform="rotate({30 * minute})">
+            <svg x="-10" y="-45" width="20" height="10">
+              <text
+                transform="rotate(-{30 * minute}) translate(0,1)"
+                class="label"
+                x="50%"
+                y="50%"
+                dominant-baseline="middle"
+                text-anchor="middle">
+                {minute}
+              </text>
+            </svg>
+          </g>
+        </g>
+        <g
+          on:click={() => (selection = 'minute')}
+          on:mouseover={() => {
+            setHour(minute + 12);
+          }}
+          class={minute + 12 === hour ? 'selected' : ''}>
+          <circle
+            class="hourCircle"
+            cx="0"
+            cy="-25"
+            r="6"
+            transform="rotate({30 * minute})" />
+          <g transform="rotate({30 * minute})">
+            <svg x="-10" y="-30" width="20" height="10">
+              <text
+                transform="rotate(-{30 * minute}) translate(0,1)"
+                class="label-inner"
+                x="50%"
+                y="50%"
+                dominant-baseline="middle"
+                text-anchor="middle">
+                {minute + 12}
+              </text>
+            </svg>
+          </g>
+        </g>
+      {/each}
       <line
-        class="minor"
-        y1="42"
-        y2="45"
-        transform="rotate({6 * (minute + offset)})" />
-    {/each}
-  {/each}
-
-  <!-- hitarea -->
-  {#each [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as minute, i}
-    <g on:mouseover="{()=>{hour = minute}}">
-      <circle
-        class="hourHit"
-        cx="0"
-        cy="-40"
-        r="6"
-        transform="rotate({30 * minute})" />
-      <g transform="rotate({30 * minute})">
-        <svg x="-10" y="-45" width="20" height="10">
-          <text
-            transform="rotate(-{30 * minute}) translate(0,1)"
-            class="label"
-            x="50%"
-            y="50%"
-            dominant-baseline="middle"
-            text-anchor="middle">
-            {minute}
-          </text>
-        </svg>
-      </g>
+        class="line"
+        y1="0"
+        y2={size}
+        transform="rotate({30 * hourIndex})" />
     </g>
-    <g on:mouseover="{()=>{hour = minute}}">
-      <circle
-        class="hourHit"
-        cx="0"
-        cy="-25"
-        r="6"
-        transform="rotate({30 * minute})" />
-      <g transform="rotate({30 * minute})">
-        <svg x="-10" y="-30" width="20" height="10">
-          <text
-            transform="rotate(-{30 * minute}) translate(0,1)"
-            class="label"
-            x="50%"
-            y="50%"
-            dominant-baseline="middle"
-            text-anchor="middle">
-            {minute + 12}
-          </text>
-        </svg>
-      </g>
+  {:else}
+    <g transition:fade class="mins">
+      {#each minutes as min, i}
+        <g
+          on:click={() => (selection = 'minute')}
+          on:mouseover={() => {
+            setMinute(min);
+          }}
+          class={min === minute ? 'selected' : ''}>
+          <circle
+            class="hourCircle"
+            cx="0"
+            cy="-40"
+            r="6"
+            transform="rotate({6 * min})" />
+          <g transform="rotate({6 * min})">
+            <svg x="-10" y="-45" width="20" height="10">
+              <text
+                class={min % 5 === 0 ? 'label show' : 'label'}
+                transform="rotate(-{6 * min}) translate(0,1)"
+                x="50%"
+                y="50%"
+                dominant-baseline="middle"
+                text-anchor="middle">
+                {min}
+              </text>
+            </svg>
+          </g>
+        </g>
+      {/each}
+      <line class="line" y1="0" y2="-35" transform="rotate({6 * minute})" />
     </g>
-  {/each}
-
-  <!-- hour hand
-  <line
-    class="hour"
-    y1="2"
-    y2="-20"
-    transform="rotate({30 * hours + minutes / 2})" />
+  {/if}
 
   <!-- minute hand
   <line
@@ -155,4 +215,5 @@
     <line class="second-counterweight" y1="10" y2="2" />
   </g> -->
 </svg>
-<h1>{hour%12}</h1>
+<h1>{hour}</h1>
+<h1>{size}</h1>

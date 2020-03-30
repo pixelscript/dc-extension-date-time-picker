@@ -1,9 +1,10 @@
 <script>
   import { createEventDispatcher } from "svelte";
+  export let date;
+  
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ]
   const dispatch = createEventDispatcher();
 
-  export let date;
   function addYear() {
     setDate(new Date(date.setFullYear(date.getFullYear() + 1)));
   }
@@ -97,7 +98,7 @@
     grid-template-columns: 1fr;
     grid-template-rows: 0.1fr 0.1fr 1fr;
     grid-template-areas: "year" "month" "date";
-    max-width: 20em;
+    width: 20em;
     background: #ddd;
     grid-gap: 1px;
     border:1px solid #ddd;
