@@ -92,8 +92,9 @@
     stroke: #00acc1;
     stroke-width: 2;
   }
-  g.mins text.title {
-    fill:black;
+  g.mins text.title, text.title {
+    fill: black;
+    stroke: white;
   }
 </style>
 
@@ -101,9 +102,7 @@
   <circle class="clock-face" r="48" />
   {#if selection === 'hour'}
     <g transition:fade>
-          <text class="title"
-                dominant-baseline="middle"
-                text-anchor="middle">Hour</text>
+
       {#each [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as minute, i}
         <g
           on:click={() => (selection = 'minute')}
@@ -163,12 +162,12 @@
         y1="0"
         y2={size}
         transform="rotate({30 * hourIndex})" />
+      <text class="title" dominant-baseline="middle" text-anchor="middle" paint-order="stroke">
+        Hour
+      </text>
     </g>
   {:else if selection === 'minute'}
     <g transition:fade class="mins">
-      <text class="title"
-                dominant-baseline="middle"
-                text-anchor="middle">Minute</text>
       {#each minutes as min, i}
         <g class={min === minute ? 'selected' : ''}>
           <circle
@@ -193,6 +192,9 @@
         </g>
       {/each}
       <line class="line" y1="0" y2="-35" transform="rotate({6 * minute})" />
+      <text class="title" dominant-baseline="middle" text-anchor="middle" paint-order="stroke">
+        Minute
+      </text>
       {#each minutes as min, i}
         <path
           on:click={() => (selection = 'seconds')}
@@ -206,12 +208,9 @@
     </g>
   {:else}
     <g transition:fade class="mins">
-    <text class="title"
-                dominant-baseline="middle"
-                text-anchor="middle">Seconds</text>
+
       {#each minutes as min, i}
-        <g
-          class={min === seconds ? 'selected' : ''}>
+        <g class={min === seconds ? 'selected' : ''}>
           <circle
             class="hourCircle"
             cx="0"
@@ -234,6 +233,9 @@
         </g>
       {/each}
       <line class="line" y1="0" y2="-35" transform="rotate({6 * seconds})" />
+      <text class="title" dominant-baseline="middle" text-anchor="middle" paint-order="stroke">
+        Seconds
+      </text>
       {#each minutes as min, i}
         <path
           on:click={() => dispatch('hide')}
