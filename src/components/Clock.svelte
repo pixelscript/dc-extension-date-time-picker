@@ -33,7 +33,7 @@
     });
   }
   function setDate() {
-    dispatch('update', date);
+    dispatch("update", date);
   }
 </script>
 
@@ -64,9 +64,11 @@
     fill: white;
   }
 
-  .hourCircle {
+  .hourCircle,
+  .hit {
     stroke: transparent;
     fill: transparent;
+    cursor: pointer;
   }
   g.mins text {
     fill: transparent;
@@ -90,12 +92,18 @@
     stroke: #00acc1;
     stroke-width: 2;
   }
+  g.mins text.title {
+    fill:black;
+  }
 </style>
 
 <svg class="clock" viewBox="-50 -50 100 100">
   <circle class="clock-face" r="48" />
   {#if selection === 'hour'}
     <g transition:fade>
+          <text class="title"
+                dominant-baseline="middle"
+                text-anchor="middle">Hour</text>
       {#each [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as minute, i}
         <g
           on:click={() => (selection = 'minute')}
@@ -156,15 +164,13 @@
         y2={size}
         transform="rotate({30 * hourIndex})" />
     </g>
-  {:else if selection==='minute'}
+  {:else if selection === 'minute'}
     <g transition:fade class="mins">
+      <text class="title"
+                dominant-baseline="middle"
+                text-anchor="middle">Minute</text>
       {#each minutes as min, i}
-        <g
-          on:click={() => (selection = 'seconds')}
-          on:mouseover={() => {
-            setMinute(min);
-          }}
-          class={min === minute ? 'selected' : ''}>
+        <g class={min === minute ? 'selected' : ''}>
           <circle
             class="hourCircle"
             cx="0"
@@ -187,15 +193,24 @@
         </g>
       {/each}
       <line class="line" y1="0" y2="-35" transform="rotate({6 * minute})" />
+      {#each minutes as min, i}
+        <path
+          on:click={() => (selection = 'seconds')}
+          on:mouseover={() => {
+            setMinute(min);
+          }}
+          class="hit"
+          d="M 0 0 L -2 -47 L 2 -47 Z"
+          transform="rotate({6 * min})" />
+      {/each}
     </g>
-    {:else}
+  {:else}
     <g transition:fade class="mins">
+    <text class="title"
+                dominant-baseline="middle"
+                text-anchor="middle">Seconds</text>
       {#each minutes as min, i}
         <g
-          on:click={() => (dispatch('hide'))}
-          on:mouseover={() => {
-            setSeconds(min);
-          }}
           class={min === seconds ? 'selected' : ''}>
           <circle
             class="hourCircle"
@@ -219,6 +234,16 @@
         </g>
       {/each}
       <line class="line" y1="0" y2="-35" transform="rotate({6 * seconds})" />
+      {#each minutes as min, i}
+        <path
+          on:click={() => dispatch('hide')}
+          on:mouseover={() => {
+            setSeconds(min);
+          }}
+          class="hit"
+          d="M 0 0 L -2 -47 L 2 -47 Z"
+          transform="rotate({6 * min})" />
+      {/each}
     </g>
   {/if}
 </svg>
