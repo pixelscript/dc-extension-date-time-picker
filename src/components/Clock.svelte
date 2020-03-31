@@ -92,7 +92,8 @@
     stroke: #00acc1;
     stroke-width: 2;
   }
-  g.mins text.title, text.title {
+  g.mins text.title,
+  text.title {
     fill: black;
     stroke: white;
   }
@@ -101,12 +102,16 @@
 <svg class="clock" viewBox="-50 -50 100 100">
   <circle class="clock-face" r="48" />
   {#if selection === 'hour'}
+    <line class="line" y1="0" y2={size} transform="rotate({30 * hourIndex})" />
     <g transition:fade|local>
 
       {#each [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as minute, i}
         <g
-          on:click={() => (selection = 'minute')}
+          on:mouseup={() => (selection = 'minute')}
           on:mouseover={() => {
+            setHour(minute);
+          }}
+          on:mousedown={() => {
             setHour(minute);
           }}
           class={minute === hour ? 'selected' : ''}>
@@ -131,8 +136,11 @@
           </g>
         </g>
         <g
-          on:click={() => (selection = 'minute')}
+          on:mouseup={() => (selection = 'minute')}
           on:mouseover={() => {
+            setHour(minute + 12);
+          }}
+          on:mousedown={() => {
             setHour(minute + 12);
           }}
           class={minute + 12 === hour ? 'selected' : ''}>
@@ -157,12 +165,11 @@
           </g>
         </g>
       {/each}
-      <line
-        class="line"
-        y1="0"
-        y2={size}
-        transform="rotate({30 * hourIndex})" />
-      <text class="title" dominant-baseline="middle" text-anchor="middle" paint-order="stroke">
+      <text
+        class="title"
+        dominant-baseline="middle"
+        text-anchor="middle"
+        paint-order="stroke">
         Hour
       </text>
     </g>
@@ -192,13 +199,20 @@
         </g>
       {/each}
       <line class="line" y1="0" y2="-35" transform="rotate({6 * minute})" />
-      <text class="title" dominant-baseline="middle" text-anchor="middle" paint-order="stroke">
+      <text
+        class="title"
+        dominant-baseline="middle"
+        text-anchor="middle"
+        paint-order="stroke">
         Minute
       </text>
       {#each minutes as min, i}
         <path
-          on:click={() => (selection = 'seconds')}
+          on:mouseup={() => (selection = 'seconds')}
           on:mouseover={() => {
+            setMinute(min);
+          }}
+          on:mousedown={() => {
             setMinute(min);
           }}
           class="hit"
@@ -233,7 +247,11 @@
         </g>
       {/each}
       <line class="line" y1="0" y2="-35" transform="rotate({6 * seconds})" />
-      <text class="title" dominant-baseline="middle" text-anchor="middle" paint-order="stroke">
+      <text
+        class="title"
+        dominant-baseline="middle"
+        text-anchor="middle"
+        paint-order="stroke">
         Seconds
       </text>
       {#each minutes as min, i}
