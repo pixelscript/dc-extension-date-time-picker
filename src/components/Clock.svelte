@@ -177,12 +177,27 @@
   {:else if selection === 'minute'}
     <g transition:fade|local class="mins">
       {#each minuteCoords as coord, i}
-        <g class={i === minute ? 'selected' : ''}>
-          <circle
-            class="hourCircle"
-            cx={coord.x} cy={coord.y}
-            r="6"/>
-            <svg x={coord.x - 10} y={coord.y - 4}  width="20" height="10">
+        {#if i % 5 === 0}
+          <g>
+            <circle class="hourCircle" cx={coord.x} cy={coord.y} r="6" />
+            <svg x={coord.x - 10} y={coord.y - 4} width="20" height="10">
+              <text
+                class="label show"
+                x="50%"
+                y="50%"
+                dominant-baseline="middle"
+                text-anchor="middle">
+                {i}
+              </text>
+            </svg>
+          </g>
+        {/if}
+      {/each}
+      {#each minuteCoords as coord, i}
+        {#if i === minute}
+          <g class="selected">
+            <circle class="hourCircle" cx={coord.x} cy={coord.y} r="6" />
+            <svg x={coord.x - 10} y={coord.y - 4} width="20" height="10">
               <text
                 class={i % 5 === 0 ? 'label show' : 'label'}
                 x="50%"
@@ -192,8 +207,10 @@
                 {i}
               </text>
             </svg>
-        </g>
+          </g>
+        {/if}
       {/each}
+
       <line class="line" y1="0" y2="-35" transform="rotate({6 * minute})" />
       <text
         class="title"
@@ -220,11 +237,26 @@
     <g transition:fade|local class="mins">
 
       {#each minuteCoords as coord, i}
-        <g class={i === seconds ? 'selected' : ''}>
-          <circle
-            class="hourCircle"
-            cx={coord.x} cy={coord.y}
-            r="6"/>
+        {#if i % 5 === 0}
+          <g>
+            <circle class="hourCircle" cx={coord.x} cy={coord.y} r="6" />
+            <svg x={coord.x - 10} y={coord.y - 4} width="20" height="10">
+              <text
+                class="label show"
+                x="50%"
+                y="50%"
+                dominant-baseline="middle"
+                text-anchor="middle">
+                {i}
+              </text>
+            </svg>
+          </g>
+        {/if}
+      {/each}
+      {#each minuteCoords as coord, i}
+        {#if i === seconds}
+          <g class="selected">
+            <circle class="hourCircle" cx={coord.x} cy={coord.y} r="6" />
             <svg x={coord.x - 10} y={coord.y - 4} width="20" height="10">
               <text
                 class={i % 5 === 0 ? 'label show' : 'label'}
@@ -235,7 +267,8 @@
                 {i}
               </text>
             </svg>
-        </g>
+          </g>
+        {/if}
       {/each}
       <line class="line" y1="0" y2="-35" transform="rotate({6 * seconds})" />
       <text
