@@ -32,7 +32,9 @@
     hour = h;
     hourIndex = h % 12;
     size = h > 12 ? -20 : -35;
+    const day = date.getDate();
     date.setHours(h);
+    date.setDate(day);
     setDate();
   }
   function setMinute(m) {
