@@ -219,7 +219,7 @@
         dominant-baseline="middle"
         text-anchor="middle"
         paint-order="stroke">
-        Minute
+        Minutes
       </text>
       {#each minuteCoords as coord, i}
         <path
